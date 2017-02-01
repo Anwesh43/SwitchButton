@@ -23,8 +23,9 @@ public class SwitchButtonGroup {
     private List<SwitchButton> switchButtons = new ArrayList<>();
     public SwitchButtonGroup(Activity activity) {
         this.activity = activity;
+        initDimensions();
     }
-    public void initDimensions() {
+    private void initDimensions() {
         DisplayManager displayManager = (DisplayManager)activity.getSystemService(Context.DISPLAY_SERVICE);
         Display display = displayManager.getDisplay(0);
         if(display!=null) {
@@ -52,7 +53,7 @@ public class SwitchButtonGroup {
         for(SwitchButton switchButton:switchButtons) {
             switchButton.setX(x);
             switchButton.setY(y);
-            activity.addContentView(switchButton,new ViewGroup.LayoutParams(dimen,dimen));
+            activity.addContentView(switchButton,new ViewGroup.LayoutParams(dimen,dimen/4));
             x+=dimen;
         }
 
@@ -75,9 +76,16 @@ public class SwitchButtonGroup {
             paint.setColor(Color.parseColor("#37474F"));
             canvas.drawRoundRect(new RectF(0,0,canvas.getWidth(),canvas.getHeight()),r,r,paint);
             paint.setColor(Color.parseColor("#990288D1"));
-            canvas.drawCircle(canvas.getWidth()/2,canvas.getHeight()/2,r,paint);
+            canvas.drawCircle(canvas.getWidth()/2,canvas.getHeight()/2,rFill,paint);
             if(isAnimated) {
                 try {
+                    if(rFill<canvas.getWidth()/2) {
+                        rFill+=canvas.getWidth()/14;
+                    }
+                    else {
+                        rFill = canvas.getWidth()/2-canvas.getWidth()/120;
+                        isAnimated = false;
+                    }
                     time++;
                     Thread.sleep(50);
                     invalidate();
