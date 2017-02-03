@@ -18,6 +18,7 @@ import java.util.List;
 public class SwitchButtonGroup {
     private List<String> actions = new ArrayList<>();
     private Activity activity;
+    int prevIndex = -1;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private int w,h;
     private List<SwitchButton> switchButtons = new ArrayList<>();
@@ -35,9 +36,11 @@ public class SwitchButtonGroup {
             h = size.y;
         }
     }
-    public void addAction(String action) {
+    public void addAction(String action,OnSelectListener selectListener) {
         actions.add(action);
         switchButtons.add(new SwitchButton(activity,action));
+        switchButtons.get(switchButtons.size()-1).setIndex(switchButtons.size()-1);
+        switchButtons.get(switchButtons.size()-1).setOnSelectListener(selectListener);
     }
     public void resetAnimationOfButtons() {
         for(SwitchButton switchButton:switchButtons) {
@@ -62,9 +65,17 @@ public class SwitchButtonGroup {
         private boolean isAnimated = false;
         private int rFill = 0,time = 0;
         private String action;
+        private OnSelectListener onSelectListener;
+        private int index = -1;
         public SwitchButton(Context context,String action) {
             super(context);
             this.action = action;
+        }
+        public void setOnSelectListener(OnSelectListener onSelectListener) {
+            this.onSelectListener = onSelectListener;
+        }
+        public void setIndex(int index) {
+            this.index = index;
         }
         public void reset() {
             isAnimated = false;
@@ -88,6 +99,9 @@ public class SwitchButtonGroup {
                     else {
                         rFill = canvas.getWidth()/2-canvas.getWidth()/120;
                         isAnimated = false;
+                        if(onSelectListener!=null) {
+                            onSelectListener.onSelect();
+                        }
                     }
                     time++;
                     Thread.sleep(50);
@@ -98,12 +112,16 @@ public class SwitchButtonGroup {
             }
         }
         public boolean onTouchEvent(MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN && !isAnimated) {
+            if(event.getAction() == MotionEvent.ACTION_DOWN && !isAnimated && index!=prevIndex) {
                 resetAnimationOfButtons();
                 isAnimated = true;
+                prevIndex = index;
                 postInvalidate();
             }
             return true;
         }
+    }
+    public interface OnSelectListener {
+        void onSelect();
     }
 }
