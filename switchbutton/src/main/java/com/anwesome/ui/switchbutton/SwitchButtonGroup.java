@@ -75,6 +75,9 @@ public class SwitchButtonGroup {
             int r= canvas.getHeight()/4;
             paint.setColor(Color.parseColor("#37474F"));
             canvas.drawRoundRect(new RectF(0,0,canvas.getWidth(),canvas.getHeight()),r,r,paint);
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(28);
+            canvas.drawText(action,canvas.getWidth()/2-paint.measureText(action),canvas.getHeight()/2,paint);
             paint.setColor(Color.parseColor("#990288D1"));
             canvas.drawCircle(canvas.getWidth()/2,canvas.getHeight()/2,rFill,paint);
             if(isAnimated) {
